@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="Farmacia" Class="DataClasses1DataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=JONASJMX;Initial Catalog=Farmacia;Integrated Security=True;Trust Server Certificate=True" SettingsObjectName="Datos.Properties.Settings" SettingsPropertyName="FarmaciaConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Cliente" Member="Cliente">
+    <Type Name="Cliente">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="nombre" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="apellido" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="cedula" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="direccion" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="telefono" Type="System.String" DbType="NVarChar(10)" CanBeNull="true" />
+      <Column Name="correo" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="Cliente_Factura" Member="Factura" ThisKey="id" OtherKey="idCliente" Type="Factura" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Factura" Member="Factura">
+    <Type Name="Factura">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="idCliente" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="fechaVenta" Type="System.DateTime" DbType="Date" CanBeNull="true" />
+      <Column Name="iva" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="subtotal" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="Total" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Association Name="Factura_Venta_Detalle" Member="Venta_Detalle" ThisKey="id" OtherKey="idFactura" Type="Venta_Detalle" />
+      <Association Name="Cliente_Factura" Member="Cliente" ThisKey="idCliente" OtherKey="id" Type="Cliente" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Producto" Member="Producto">
+    <Type Name="Producto">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="nombreComercial" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="nombreGenerico" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="presentacion" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="precio" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="stock" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="Producto_Venta_Detalle" Member="Venta_Detalle" ThisKey="id" OtherKey="idProducto" Type="Venta_Detalle" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Venta_Detalle" Member="Venta_Detalle">
+    <Type Name="Venta_Detalle">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="idFactura" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="idProducto" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="cantidad" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="subtotal" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Association Name="Factura_Venta_Detalle" Member="Factura" ThisKey="idFactura" OtherKey="id" Type="Factura" IsForeignKey="true" />
+      <Association Name="Producto_Venta_Detalle" Member="Producto" ThisKey="idProducto" OtherKey="id" Type="Producto" IsForeignKey="true" />
+    </Type>
+  </Table>
+</Database>
