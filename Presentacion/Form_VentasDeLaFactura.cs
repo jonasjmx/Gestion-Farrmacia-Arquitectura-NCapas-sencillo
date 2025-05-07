@@ -14,32 +14,31 @@ namespace Presentacion
 {
     public partial class Form_VentasDeLaFactura : Form
     {
-        List<VentaDetalleProductoCabeceraEntidad> ventasCabecera = new List<VentaDetalleProductoCabeceraEntidad>();
-        ClienteEntidad cliente = new ClienteEntidad();
-        FacturaEntidad factura = new FacturaEntidad();
+
+        private readonly List<VentaDetalleProductoCabeceraEntidad> ventasCabecera = new List<VentaDetalleProductoCabeceraEntidad>();
+        private readonly ClienteEntidad cliente = new ClienteEntidad();
+        private readonly FacturaEntidad factura = new FacturaEntidad();
+
         public Form_VentasDeLaFactura(FacturaEntidad factura)
         {
             InitializeComponent();
-            CargarFactura(factura);
+            this.factura = factura;
             CargarDatosFactura();
             CargarVentasFactura();
         }
 
-        private void CargarFactura(FacturaEntidad factura)
-        {
-            this.factura = factura;
-        }
-
         private void CargarDatosFactura()
         {
-            cliente = ClienteNegocio.BuscarClientePorId(Convert.ToInt32(factura.IdCliente));
-            if (cliente == null)
+            var clienteTemporal = ClienteNegocio.BuscarClientePorId(Convert.ToInt32(factura.IdCliente));
+            if (clienteTemporal == null)
                 return;
+
             label__NumeroFactura.Text = factura.Id.ToString();
-            label_CedulaCLiente.Text = cliente.Id.ToString();
-            label_NombreCliente.Text = cliente.Nombre.ToString();
-            label_ApellidoCliente.Text = cliente.Apellido.ToString();
+            label_CedulaCLiente.Text = clienteTemporal.Id.ToString();
+            label_NombreCliente.Text = clienteTemporal.Nombre.ToString();
+            label_ApellidoCliente.Text = clienteTemporal.Apellido.ToString();
         }
+
 
         private void CargarVentasFactura()
         {
@@ -77,10 +76,6 @@ namespace Presentacion
 
         private void ImprimirDoc_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
-            Pen penBlack = new Pen(Color.Black, 2);
-            Rectangle rectangle = new Rectangle(0, 0, 600, 800);
-            e.Graphics.DrawRectangle(penBlack, rectangle);
-
             Font fuenteCabezera = new Font("Calibri", 12, FontStyle.Bold);
             Font fuenteCabezera2 = new Font("Calibri", 10);
             Font fuenteCuerpo = new Font("Time New Roman", 8);
@@ -114,7 +109,7 @@ namespace Presentacion
                 e.Graphics.DrawString(item.Subtotal.ToString("0.00"), fuenteCuerpo, Brushes.Black, 500, y);
             }
 
-            y = 700;
+            y = 1100;
             e.Graphics.DrawString("IVA: " + factura.Iva.ToString("0.00"), fuenteCuerpo, Brushes.Black, 20, y += 20);
             e.Graphics.DrawString("SUBTOTAL: " + factura.Subtotal.ToString("0.00"), fuenteCuerpo, Brushes.Black, 20, y += 20);
             e.Graphics.DrawString("TOTAL: " + factura.Total.ToString("0.00"), fuenteCuerpo, Brushes.Black, 20, y += 20);

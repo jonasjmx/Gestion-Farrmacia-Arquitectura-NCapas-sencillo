@@ -10,9 +10,9 @@ namespace Negocio
 {
     public static class FacturaNegocio
     {
-        public static FacturaEntidad DevolverFacturas()
+        public static string ComprobarExistenciaProductos(FacturaEntidad factura)
         {
-            throw new NotImplementedException();
+            return FacturaDatos.ComprobarExistenciaProductos(factura);
         }
 
         public static int DevolverNumeroUltimoComprobante()

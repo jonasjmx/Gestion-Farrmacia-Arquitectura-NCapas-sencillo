@@ -13,6 +13,7 @@ using System.Windows.Forms;
 
 namespace Presentacion
 {
+
     public partial class Form1 : Form
     {
         // Entidades inportantes para la factura
@@ -59,7 +60,7 @@ namespace Presentacion
                 return;
             }
         }
-
+        
         private void button_Productos_Click(object sender, EventArgs e)
         {
             using (Formulario_Productos formulario_Productos = new Formulario_Productos())
@@ -247,8 +248,23 @@ namespace Presentacion
         {
             if (HayCamposVacios())
                 return false;
+            if (ComprobarListadoConBD())
+                return false;
             GuardarCliente();
             GuardarFactura();
+            return true;
+        }
+
+        private bool ComprobarListadoConBD()
+        {
+            string productoInexistente = FacturaNegocio.ComprobarExistenciaProductos(factura);
+            if (string.IsNullOrEmpty(productoInexistente))
+            {
+                MessageBox.Show("Error, no se puede realizar la venta, el producto no existe en la base de datos", "Comprobar Productos", 
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
             return true;
         }
 
@@ -361,14 +377,9 @@ namespace Presentacion
 
         private void ImprimirDoc_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
-            Pen penBlack = new Pen(Color.Black, 2);
-            Rectangle rectangle = new Rectangle(0, 0, 500, 800);
-            e.Graphics.DrawRectangle(penBlack, rectangle);
-
-            Font fuenteCabezera = new Font("Calibri", 12, FontStyle.Bold);
-            Font fuenteCabezera2 = new Font("Calibri", 10);
-            Font fuenteCuerpo = new Font("Time New Roman", 8);
-
+            Font fuenteCabezera = new Font("Calibri", 14, FontStyle.Bold);
+            Font fuenteCabezera2 = new Font("Calibri", 12);
+            Font fuenteCuerpo = new Font("Time New Roman", 10);
 
             int y = 5;
 
@@ -394,11 +405,11 @@ namespace Presentacion
                 e.Graphics.DrawString(item.Precio.ToString("0." +
                     "" +
                     "00"), fuenteCuerpo, Brushes.Black, 140, y);
-                e.Graphics.DrawString(item.Cantidad.ToString(), fuenteCuerpo, Brushes.Black, 250, y);
-                e.Graphics.DrawString(item.Subtotal.ToString("0.00"), fuenteCuerpo, Brushes.Black, 325, y);
+                e.Graphics.DrawString(item.Cantidad.ToString(), fuenteCuerpo, Brushes.Black, 400, y);
+                e.Graphics.DrawString(item.Subtotal.ToString("0.00"), fuenteCuerpo, Brushes.Black, 500, y);
             }
 
-            y += 20;
+            y = 700;
             e.Graphics.DrawString("IVA: " + factura.Iva.ToString("0.00"), fuenteCuerpo, Brushes.Black, 20, y += 20);
             e.Graphics.DrawString("SUBTOTAL: " + factura.Subtotal.ToString("0.00"), fuenteCuerpo, Brushes.Black, 20, y += 20);
             e.Graphics.DrawString("TOTAL: " + factura.Total.ToString("0.00"), fuenteCuerpo, Brushes.Black, 20, y += 20);

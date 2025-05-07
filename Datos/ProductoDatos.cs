@@ -78,5 +78,10 @@ namespace Datos
                 return;
             }
         }
+
+        internal static string comprobarExistencia(int idProducto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -33,15 +33,15 @@ namespace Datos
     partial void InsertCliente(Cliente instance);
     partial void UpdateCliente(Cliente instance);
     partial void DeleteCliente(Cliente instance);
-    partial void InsertFactura(Factura instance);
-    partial void UpdateFactura(Factura instance);
-    partial void DeleteFactura(Factura instance);
     partial void InsertProducto(Producto instance);
     partial void UpdateProducto(Producto instance);
     partial void DeleteProducto(Producto instance);
     partial void InsertVenta_Detalle(Venta_Detalle instance);
     partial void UpdateVenta_Detalle(Venta_Detalle instance);
     partial void DeleteVenta_Detalle(Venta_Detalle instance);
+    partial void InsertFactura(Factura instance);
+    partial void UpdateFactura(Factura instance);
+    partial void DeleteFactura(Factura instance);
     #endregion
 		
 		public DataClasses1DataContext() : 
@@ -82,14 +82,6 @@ namespace Datos
 			}
 		}
 		
-		public System.Data.Linq.Table<Factura> Factura
-		{
-			get
-			{
-				return this.GetTable<Factura>();
-			}
-		}
-		
 		public System.Data.Linq.Table<Producto> Producto
 		{
 			get
@@ -103,6 +95,14 @@ namespace Datos
 			get
 			{
 				return this.GetTable<Venta_Detalle>();
+			}
+		}
+		
+		public System.Data.Linq.Table<Factura> Factura
+		{
+			get
+			{
+				return this.GetTable<Factura>();
 			}
 		}
 	}
@@ -341,257 +341,6 @@ namespace Datos
 		}
 	}
 	
-	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Factura")]
-	public partial class Factura : INotifyPropertyChanging, INotifyPropertyChanged
-	{
-		
-		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
-		
-		private int _id;
-		
-		private System.Nullable<int> _idCliente;
-		
-		private System.Nullable<System.DateTime> _fechaVenta;
-		
-		private System.Nullable<decimal> _iva;
-		
-		private System.Nullable<decimal> _subtotal;
-		
-		private System.Nullable<decimal> _Total;
-		
-		private EntitySet<Venta_Detalle> _Venta_Detalle;
-		
-		private EntityRef<Cliente> _Cliente;
-		
-    #region Definiciones de métodos de extensibilidad
-    partial void OnLoaded();
-    partial void OnValidate(System.Data.Linq.ChangeAction action);
-    partial void OnCreated();
-    partial void OnidChanging(int value);
-    partial void OnidChanged();
-    partial void OnidClienteChanging(System.Nullable<int> value);
-    partial void OnidClienteChanged();
-    partial void OnfechaVentaChanging(System.Nullable<System.DateTime> value);
-    partial void OnfechaVentaChanged();
-    partial void OnivaChanging(System.Nullable<decimal> value);
-    partial void OnivaChanged();
-    partial void OnsubtotalChanging(System.Nullable<decimal> value);
-    partial void OnsubtotalChanged();
-    partial void OnTotalChanging(System.Nullable<decimal> value);
-    partial void OnTotalChanged();
-    #endregion
-		
-		public Factura()
-		{
-			this._Venta_Detalle = new EntitySet<Venta_Detalle>(new Action<Venta_Detalle>(this.attach_Venta_Detalle), new Action<Venta_Detalle>(this.detach_Venta_Detalle));
-			this._Cliente = default(EntityRef<Cliente>);
-			OnCreated();
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
-		public int id
-		{
-			get
-			{
-				return this._id;
-			}
-			set
-			{
-				if ((this._id != value))
-				{
-					this.OnidChanging(value);
-					this.SendPropertyChanging();
-					this._id = value;
-					this.SendPropertyChanged("id");
-					this.OnidChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_idCliente", DbType="Int")]
-		public System.Nullable<int> idCliente
-		{
-			get
-			{
-				return this._idCliente;
-			}
-			set
-			{
-				if ((this._idCliente != value))
-				{
-					if (this._Cliente.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnidClienteChanging(value);
-					this.SendPropertyChanging();
-					this._idCliente = value;
-					this.SendPropertyChanged("idCliente");
-					this.OnidClienteChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_fechaVenta", DbType="Date")]
-		public System.Nullable<System.DateTime> fechaVenta
-		{
-			get
-			{
-				return this._fechaVenta;
-			}
-			set
-			{
-				if ((this._fechaVenta != value))
-				{
-					this.OnfechaVentaChanging(value);
-					this.SendPropertyChanging();
-					this._fechaVenta = value;
-					this.SendPropertyChanged("fechaVenta");
-					this.OnfechaVentaChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_iva", DbType="Decimal(18,2)")]
-		public System.Nullable<decimal> iva
-		{
-			get
-			{
-				return this._iva;
-			}
-			set
-			{
-				if ((this._iva != value))
-				{
-					this.OnivaChanging(value);
-					this.SendPropertyChanging();
-					this._iva = value;
-					this.SendPropertyChanged("iva");
-					this.OnivaChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_subtotal", DbType="Decimal(18,2)")]
-		public System.Nullable<decimal> subtotal
-		{
-			get
-			{
-				return this._subtotal;
-			}
-			set
-			{
-				if ((this._subtotal != value))
-				{
-					this.OnsubtotalChanging(value);
-					this.SendPropertyChanging();
-					this._subtotal = value;
-					this.SendPropertyChanged("subtotal");
-					this.OnsubtotalChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Total", DbType="Decimal(18,2)")]
-		public System.Nullable<decimal> Total
-		{
-			get
-			{
-				return this._Total;
-			}
-			set
-			{
-				if ((this._Total != value))
-				{
-					this.OnTotalChanging(value);
-					this.SendPropertyChanging();
-					this._Total = value;
-					this.SendPropertyChanged("Total");
-					this.OnTotalChanged();
-				}
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Factura_Venta_Detalle", Storage="_Venta_Detalle", ThisKey="id", OtherKey="idFactura")]
-		public EntitySet<Venta_Detalle> Venta_Detalle
-		{
-			get
-			{
-				return this._Venta_Detalle;
-			}
-			set
-			{
-				this._Venta_Detalle.Assign(value);
-			}
-		}
-		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Cliente_Factura", Storage="_Cliente", ThisKey="idCliente", OtherKey="id", IsForeignKey=true)]
-		public Cliente Cliente
-		{
-			get
-			{
-				return this._Cliente.Entity;
-			}
-			set
-			{
-				Cliente previousValue = this._Cliente.Entity;
-				if (((previousValue != value) 
-							|| (this._Cliente.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Cliente.Entity = null;
-						previousValue.Factura.Remove(this);
-					}
-					this._Cliente.Entity = value;
-					if ((value != null))
-					{
-						value.Factura.Add(this);
-						this._idCliente = value.id;
-					}
-					else
-					{
-						this._idCliente = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("Cliente");
-				}
-			}
-		}
-		
-		public event PropertyChangingEventHandler PropertyChanging;
-		
-		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void SendPropertyChanging()
-		{
-			if ((this.PropertyChanging != null))
-			{
-				this.PropertyChanging(this, emptyChangingEventArgs);
-			}
-		}
-		
-		protected virtual void SendPropertyChanged(String propertyName)
-		{
-			if ((this.PropertyChanged != null))
-			{
-				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
-		
-		private void attach_Venta_Detalle(Venta_Detalle entity)
-		{
-			this.SendPropertyChanging();
-			entity.Factura = this;
-		}
-		
-		private void detach_Venta_Detalle(Venta_Detalle entity)
-		{
-			this.SendPropertyChanging();
-			entity.Factura = null;
-		}
-	}
-	
 	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Producto")]
 	public partial class Producto : INotifyPropertyChanging, INotifyPropertyChanged
 	{
@@ -818,9 +567,9 @@ namespace Datos
 		
 		private System.Nullable<decimal> _subtotal;
 		
-		private EntityRef<Factura> _Factura;
-		
 		private EntityRef<Producto> _Producto;
+		
+		private EntityRef<Factura> _Factura;
 		
     #region Definiciones de métodos de extensibilidad
     partial void OnLoaded();
@@ -840,8 +589,8 @@ namespace Datos
 		
 		public Venta_Detalle()
 		{
-			this._Factura = default(EntityRef<Factura>);
 			this._Producto = default(EntityRef<Producto>);
+			this._Factura = default(EntityRef<Factura>);
 			OnCreated();
 		}
 		
@@ -953,40 +702,6 @@ namespace Datos
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Factura_Venta_Detalle", Storage="_Factura", ThisKey="idFactura", OtherKey="id", IsForeignKey=true)]
-		public Factura Factura
-		{
-			get
-			{
-				return this._Factura.Entity;
-			}
-			set
-			{
-				Factura previousValue = this._Factura.Entity;
-				if (((previousValue != value) 
-							|| (this._Factura.HasLoadedOrAssignedValue == false)))
-				{
-					this.SendPropertyChanging();
-					if ((previousValue != null))
-					{
-						this._Factura.Entity = null;
-						previousValue.Venta_Detalle.Remove(this);
-					}
-					this._Factura.Entity = value;
-					if ((value != null))
-					{
-						value.Venta_Detalle.Add(this);
-						this._idFactura = value.id;
-					}
-					else
-					{
-						this._idFactura = default(Nullable<int>);
-					}
-					this.SendPropertyChanged("Factura");
-				}
-			}
-		}
-		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Producto_Venta_Detalle", Storage="_Producto", ThisKey="idProducto", OtherKey="id", IsForeignKey=true)]
 		public Producto Producto
 		{
@@ -1021,6 +736,40 @@ namespace Datos
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Factura_Venta_Detalle", Storage="_Factura", ThisKey="idFactura", OtherKey="id", IsForeignKey=true)]
+		public Factura Factura
+		{
+			get
+			{
+				return this._Factura.Entity;
+			}
+			set
+			{
+				Factura previousValue = this._Factura.Entity;
+				if (((previousValue != value) 
+							|| (this._Factura.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Factura.Entity = null;
+						previousValue.Venta_Detalle.Remove(this);
+					}
+					this._Factura.Entity = value;
+					if ((value != null))
+					{
+						value.Venta_Detalle.Add(this);
+						this._idFactura = value.id;
+					}
+					else
+					{
+						this._idFactura = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Factura");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -1039,6 +788,257 @@ namespace Datos
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Factura")]
+	public partial class Factura : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _id;
+		
+		private System.Nullable<int> _idCliente;
+		
+		private System.Nullable<System.DateTime> _fechaVenta;
+		
+		private System.Nullable<decimal> _iva;
+		
+		private System.Nullable<decimal> _subtotal;
+		
+		private System.Nullable<decimal> _Total;
+		
+		private EntitySet<Venta_Detalle> _Venta_Detalle;
+		
+		private EntityRef<Cliente> _Cliente;
+		
+    #region Definiciones de métodos de extensibilidad
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnidChanging(int value);
+    partial void OnidChanged();
+    partial void OnidClienteChanging(System.Nullable<int> value);
+    partial void OnidClienteChanged();
+    partial void OnfechaVentaChanging(System.Nullable<System.DateTime> value);
+    partial void OnfechaVentaChanged();
+    partial void OnivaChanging(System.Nullable<decimal> value);
+    partial void OnivaChanged();
+    partial void OnsubtotalChanging(System.Nullable<decimal> value);
+    partial void OnsubtotalChanged();
+    partial void OnTotalChanging(System.Nullable<decimal> value);
+    partial void OnTotalChanged();
+    #endregion
+		
+		public Factura()
+		{
+			this._Venta_Detalle = new EntitySet<Venta_Detalle>(new Action<Venta_Detalle>(this.attach_Venta_Detalle), new Action<Venta_Detalle>(this.detach_Venta_Detalle));
+			this._Cliente = default(EntityRef<Cliente>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int id
+		{
+			get
+			{
+				return this._id;
+			}
+			set
+			{
+				if ((this._id != value))
+				{
+					this.OnidChanging(value);
+					this.SendPropertyChanging();
+					this._id = value;
+					this.SendPropertyChanged("id");
+					this.OnidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_idCliente", DbType="Int")]
+		public System.Nullable<int> idCliente
+		{
+			get
+			{
+				return this._idCliente;
+			}
+			set
+			{
+				if ((this._idCliente != value))
+				{
+					if (this._Cliente.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnidClienteChanging(value);
+					this.SendPropertyChanging();
+					this._idCliente = value;
+					this.SendPropertyChanged("idCliente");
+					this.OnidClienteChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_fechaVenta", DbType="DateTime")]
+		public System.Nullable<System.DateTime> fechaVenta
+		{
+			get
+			{
+				return this._fechaVenta;
+			}
+			set
+			{
+				if ((this._fechaVenta != value))
+				{
+					this.OnfechaVentaChanging(value);
+					this.SendPropertyChanging();
+					this._fechaVenta = value;
+					this.SendPropertyChanged("fechaVenta");
+					this.OnfechaVentaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_iva", DbType="Decimal(18,2)")]
+		public System.Nullable<decimal> iva
+		{
+			get
+			{
+				return this._iva;
+			}
+			set
+			{
+				if ((this._iva != value))
+				{
+					this.OnivaChanging(value);
+					this.SendPropertyChanging();
+					this._iva = value;
+					this.SendPropertyChanged("iva");
+					this.OnivaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_subtotal", DbType="Decimal(18,2)")]
+		public System.Nullable<decimal> subtotal
+		{
+			get
+			{
+				return this._subtotal;
+			}
+			set
+			{
+				if ((this._subtotal != value))
+				{
+					this.OnsubtotalChanging(value);
+					this.SendPropertyChanging();
+					this._subtotal = value;
+					this.SendPropertyChanged("subtotal");
+					this.OnsubtotalChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Total", DbType="Decimal(18,2)")]
+		public System.Nullable<decimal> Total
+		{
+			get
+			{
+				return this._Total;
+			}
+			set
+			{
+				if ((this._Total != value))
+				{
+					this.OnTotalChanging(value);
+					this.SendPropertyChanging();
+					this._Total = value;
+					this.SendPropertyChanged("Total");
+					this.OnTotalChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Factura_Venta_Detalle", Storage="_Venta_Detalle", ThisKey="id", OtherKey="idFactura")]
+		public EntitySet<Venta_Detalle> Venta_Detalle
+		{
+			get
+			{
+				return this._Venta_Detalle;
+			}
+			set
+			{
+				this._Venta_Detalle.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Cliente_Factura", Storage="_Cliente", ThisKey="idCliente", OtherKey="id", IsForeignKey=true)]
+		public Cliente Cliente
+		{
+			get
+			{
+				return this._Cliente.Entity;
+			}
+			set
+			{
+				Cliente previousValue = this._Cliente.Entity;
+				if (((previousValue != value) 
+							|| (this._Cliente.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Cliente.Entity = null;
+						previousValue.Factura.Remove(this);
+					}
+					this._Cliente.Entity = value;
+					if ((value != null))
+					{
+						value.Factura.Add(this);
+						this._idCliente = value.id;
+					}
+					else
+					{
+						this._idCliente = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("Cliente");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+		
+		private void attach_Venta_Detalle(Venta_Detalle entity)
+		{
+			this.SendPropertyChanging();
+			entity.Factura = this;
+		}
+		
+		private void detach_Venta_Detalle(Venta_Detalle entity)
+		{
+			this.SendPropertyChanging();
+			entity.Factura = null;
 		}
 	}
 }

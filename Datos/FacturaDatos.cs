@@ -9,6 +9,24 @@ namespace Datos
 {
     public static class FacturaDatos
     {
+        public static string ComprobarExistenciaProductos(FacturaEntidad factura)
+        {
+
+
+            try
+            {
+                string productoInexistente = factura.ListaVentaDetalle
+                    .Select(item => ProductoDatos.comprobarExistencia(item.IdProducto))
+                    .FirstOrDefault(resultado => !string.IsNullOrEmpty(resultado));
+
+                return productoInexistente; // Devuelve el producto inexistente si se encuentra, o null si no hay ninguno.
+            }
+            catch (Exception)
+            {
+                return null; // En caso de error, devuelve null.
+            }
+        }
+
         public static int DevolverNumeroUltimoComprobante()
         {
 			try
@@ -27,37 +45,38 @@ namespace Datos
 
         public static bool Nuevo(FacturaEntidad factura)
         {
-			try
-			{
-				Factura facturaLINQ = new Factura();
+            try
+            {
+                Factura facturaLINQ = new Factura
+                {
+                    idCliente = factura.IdCliente,
+                    iva = factura.Iva,
+                    subtotal = factura.Subtotal,
+                    Total = factura.Total,
+                    fechaVenta = factura.FechaVenta
+                };
 
-				facturaLINQ.idCliente = factura.IdCliente;
-				facturaLINQ.iva = factura.Iva;
-				facturaLINQ.subtotal = factura.Subtotal;
-				facturaLINQ.Total = factura.Total;
-				facturaLINQ.fechaVenta = factura.FechaVenta;
-
-				using (DataClasses1DataContext context = new DataClasses1DataContext())
-				{
-					context.Factura.InsertOnSubmit(facturaLINQ);
-					context.SubmitChanges();
-				}
+                using (DataClasses1DataContext context = new DataClasses1DataContext())
+                {
+                    context.Factura.InsertOnSubmit(facturaLINQ);
+                    context.SubmitChanges();
+                }
 
                 foreach (var ventaDetalle in factura.ListaVentaDetalle)
                 {
-					ventaDetalle.IdFactura = facturaLINQ.id;
+                    ventaDetalle.IdFactura = facturaLINQ.id;
                     VentaDetalleDatos.Nuevo(ventaDetalle);
-					ProductoDatos.ActualizarStock(ventaDetalle);
+                    ProductoDatos.ActualizarStock(ventaDetalle);
                 }
 
                 return true;
-			}
-			catch (Exception)
-			{
-				return false;
-			}
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
-
+        
         internal static List<FacturaEntidad> DevolverFacturasCliente(int id)
         {
 			try

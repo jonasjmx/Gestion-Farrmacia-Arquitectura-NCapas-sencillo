@@ -12,18 +12,6 @@
       <Association Name="Cliente_Factura" Member="Factura" ThisKey="id" OtherKey="idCliente" Type="Factura" />
     </Type>
   </Table>
-  <Table Name="dbo.Factura" Member="Factura">
-    <Type Name="Factura">
-      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
-      <Column Name="idCliente" Type="System.Int32" DbType="Int" CanBeNull="true" />
-      <Column Name="fechaVenta" Type="System.DateTime" DbType="Date" CanBeNull="true" />
-      <Column Name="iva" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
-      <Column Name="subtotal" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
-      <Column Name="Total" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
-      <Association Name="Factura_Venta_Detalle" Member="Venta_Detalle" ThisKey="id" OtherKey="idFactura" Type="Venta_Detalle" />
-      <Association Name="Cliente_Factura" Member="Cliente" ThisKey="idCliente" OtherKey="id" Type="Cliente" IsForeignKey="true" />
-    </Type>
-  </Table>
   <Table Name="dbo.Producto" Member="Producto">
     <Type Name="Producto">
       <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
@@ -42,8 +30,20 @@
       <Column Name="idProducto" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="cantidad" Type="System.Int32" DbType="Int" CanBeNull="true" />
       <Column Name="subtotal" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
-      <Association Name="Factura_Venta_Detalle" Member="Factura" ThisKey="idFactura" OtherKey="id" Type="Factura" IsForeignKey="true" />
       <Association Name="Producto_Venta_Detalle" Member="Producto" ThisKey="idProducto" OtherKey="id" Type="Producto" IsForeignKey="true" />
+      <Association Name="Factura_Venta_Detalle" Member="Factura" ThisKey="idFactura" OtherKey="id" Type="Factura" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Factura" Member="Factura">
+    <Type Name="Factura">
+      <Column Name="id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="idCliente" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="fechaVenta" Type="System.DateTime" DbType="DateTime" CanBeNull="true" />
+      <Column Name="iva" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="subtotal" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Column Name="Total" Type="System.Decimal" DbType="Decimal(18,2)" CanBeNull="true" />
+      <Association Name="Factura_Venta_Detalle" Member="Venta_Detalle" ThisKey="id" OtherKey="idFactura" Type="Venta_Detalle" />
+      <Association Name="Cliente_Factura" Member="Cliente" ThisKey="idCliente" OtherKey="id" Type="Cliente" IsForeignKey="true" />
     </Type>
   </Table>
 </Database>
