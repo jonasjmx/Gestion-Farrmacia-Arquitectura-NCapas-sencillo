@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form_VentasAlCliente));
             this.dataGridView_facturasCLiente = new System.Windows.Forms.DataGridView();
             this.button_Buscar = new System.Windows.Forms.Button();
             this.textBox_CedulaCliente = new System.Windows.Forms.TextBox();
@@ -147,8 +148,12 @@
             this.Controls.Add(this.textBox_CedulaCliente);
             this.Controls.Add(this.button_Buscar);
             this.Controls.Add(this.dataGridView_facturasCLiente);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form_VentasAlCliente";
-            this.Text = "Facturas del Cliente";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Buscar Facturas del Cliente";
+            this.Load += new System.EventHandler(this.Form_VentasAlCliente_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_facturasCLiente)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

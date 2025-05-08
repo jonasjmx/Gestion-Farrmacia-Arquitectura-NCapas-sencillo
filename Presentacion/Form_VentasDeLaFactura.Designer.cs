@@ -178,8 +178,12 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label_Ventas);
             this.Controls.Add(this.dataGridView_VentasFactura);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form_VentasDeLaFactura";
-            this.Text = "Ventas de La Factura";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Detalle factura del Cliente";
+            this.Load += new System.EventHandler(this.Form_VentasDeLaFactura_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView_VentasFactura)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

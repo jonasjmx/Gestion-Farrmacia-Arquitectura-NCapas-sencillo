@@ -4,69 +4,57 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace Datos
 {
     public static class FacturaDatos
     {
-        public static string ComprobarExistenciaProductos(FacturaEntidad factura)
+        public static int DevolverNumeroUltimoComprobante()
         {
-
-
             try
             {
-                string productoInexistente = factura.ListaVentaDetalle
-                    .Select(item => ProductoDatos.comprobarExistencia(item.IdProducto))
-                    .FirstOrDefault(resultado => !string.IsNullOrEmpty(resultado));
-
-                return productoInexistente; // Devuelve el producto inexistente si se encuentra, o null si no hay ninguno.
+                using (DataClasses1DataContext context = new DataClasses1DataContext())
+                {
+                    int resultado = context.Factura.Count();
+                    return resultado + 1;
+                }
             }
             catch (Exception)
             {
-                return null; // En caso de error, devuelve null.
+                return -1;
             }
-        }
-
-        public static int DevolverNumeroUltimoComprobante()
-        {
-			try
-			{
-				using (DataClasses1DataContext context = new DataClasses1DataContext())
-				{
-					int resultado = context.Factura.Count();
-					return resultado + 1;
-				}
-			}
-			catch (Exception)
-			{
-				return -1;
-			}
         }
 
         public static bool Nuevo(FacturaEntidad factura)
         {
             try
             {
-                Factura facturaLINQ = new Factura
+                using (TransactionScope scope = new TransactionScope())
                 {
-                    idCliente = factura.IdCliente,
-                    iva = factura.Iva,
-                    subtotal = factura.Subtotal,
-                    Total = factura.Total,
-                    fechaVenta = factura.FechaVenta
-                };
+                    Factura facturaLINQ = new Factura
+                    {
+                        idCliente = factura.IdCliente,
+                        iva = factura.Iva,
+                        subtotal = factura.Subtotal,
+                        Total = factura.Total,
+                        fechaVenta = factura.FechaVenta
+                    };
 
-                using (DataClasses1DataContext context = new DataClasses1DataContext())
-                {
-                    context.Factura.InsertOnSubmit(facturaLINQ);
-                    context.SubmitChanges();
-                }
+                    using (DataClasses1DataContext context = new DataClasses1DataContext())
+                    {
+                        context.Factura.InsertOnSubmit(facturaLINQ);
+                        context.SubmitChanges();
+                    }
 
-                foreach (var ventaDetalle in factura.ListaVentaDetalle)
-                {
-                    ventaDetalle.IdFactura = facturaLINQ.id;
-                    VentaDetalleDatos.Nuevo(ventaDetalle);
-                    ProductoDatos.ActualizarStock(ventaDetalle);
+                    foreach (var ventaDetalle in factura.ListaVentaDetalle)
+                    {
+                        ventaDetalle.IdFactura = facturaLINQ.id;
+                        VentaDetalleDatos.Nuevo(ventaDetalle);
+                        ProductoDatos.ActualizarStock(ventaDetalle);
+                    }
+
+                    scope.Complete();
                 }
 
                 return true;
@@ -76,37 +64,43 @@ namespace Datos
                 return false;
             }
         }
-        
+
         internal static List<FacturaEntidad> DevolverFacturasCliente(int id)
         {
-			try
-			{
+            try
+            {
                 List<FacturaEntidad> facturas = new List<FacturaEntidad>();
-                using (DataClasses1DataContext context = new DataClasses1DataContext())
+                using (TransactionScope scope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
                 {
-                    var listaFacturasLINQ = context.Factura.Where(x => x.idCliente == id);
-
-                    if (listaFacturasLINQ == null || listaFacturasLINQ.Count() == 0)
-                        return null;
-
-                    foreach (var facturaLINQ in listaFacturasLINQ)
+                    using (DataClasses1DataContext context = new DataClasses1DataContext())
                     {
-                        facturas.Add(new FacturaEntidad(
-                            facturaLINQ.id,
-                            (int)facturaLINQ.idCliente,
-                            (DateTime)facturaLINQ.fechaVenta,
-                            (decimal)facturaLINQ.iva,
-                            (decimal)facturaLINQ.subtotal,
-                            (decimal)facturaLINQ.Total
-                            ));
+                        var listaFacturasLINQ = context.Factura.Where(x => x.idCliente == id);
+
+                        if (listaFacturasLINQ == null || listaFacturasLINQ.Count() == 0)
+                            return null;
+
+                        foreach (var facturaLINQ in listaFacturasLINQ)
+                        {
+                            facturas.Add(new FacturaEntidad(
+                                facturaLINQ.id,
+                                (int)facturaLINQ.idCliente,
+                                (DateTime)facturaLINQ.fechaVenta,
+                                (decimal)facturaLINQ.iva,
+                                (decimal)facturaLINQ.subtotal,
+                                (decimal)facturaLINQ.Total
+                                ));
+                        }
                     }
+
+                    scope.Complete();
                 }
-				return facturas;
+
+                return facturas;
             }
-			catch (Exception)
-			{
-				return null;
-			}
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

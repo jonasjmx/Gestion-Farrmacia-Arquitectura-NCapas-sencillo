@@ -4,39 +4,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace Datos
 {
     public static class ClienteDatos
     {
         public static ClienteEntidad BuscarClientePorCedula(string cedula)
-		{
-			try
-			{
-				ClienteEntidad cliente = new ClienteEntidad();
-				Cliente clienteLINQ = new Cliente();
-				using (DataClasses1DataContext context = new DataClasses1DataContext())
-				{
-                    clienteLINQ = context.Cliente.FirstOrDefault(x => x.cedula == cedula.ToString());
+        {
+            try
+            {
+                ClienteEntidad cliente = new ClienteEntidad();
+                Cliente clienteLINQ = new Cliente();
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    using (DataClasses1DataContext context = new DataClasses1DataContext())
+                    {
+                        clienteLINQ = context.Cliente.FirstOrDefault(x => x.cedula == cedula.ToString());
 
-					if (clienteLINQ == null)
-                        return null;
+                        if (clienteLINQ == null)
+                            return null;
 
-                    cliente.Id = clienteLINQ.id;
-                    cliente.Cedula = clienteLINQ.cedula;
-                    cliente.Nombre = clienteLINQ.nombre;
-                    cliente.Apellido = clienteLINQ.apellido;
-                    cliente.Direccion = clienteLINQ.direccion;
-                    cliente.Telefono = clienteLINQ.telefono;
-                    cliente.Correo = clienteLINQ.correo;
+                        cliente.Id = clienteLINQ.id;
+                        cliente.Cedula = clienteLINQ.cedula;
+                        cliente.Nombre = clienteLINQ.nombre;
+                        cliente.Apellido = clienteLINQ.apellido;
+                        cliente.Direccion = clienteLINQ.direccion;
+                        cliente.Telefono = clienteLINQ.telefono;
+                        cliente.Correo = clienteLINQ.correo;
+                    }
+                    scope.Complete();
                 }
                 return cliente;
-			}
-			catch (Exception)
-			{
-				return null;
-			}
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
+
         public static ClienteEntidad Nuevo(ClienteEntidad cliente)
         {
             try
@@ -50,10 +56,14 @@ namespace Datos
                 clienteLINQ.direccion = cliente.Direccion;
                 clienteLINQ.nombre = cliente.Nombre;
 
-                using (DataClasses1DataContext context = new DataClasses1DataContext())
+                using (TransactionScope scope = new TransactionScope())
                 {
-                    context.Cliente.InsertOnSubmit(clienteLINQ);
-                    context.SubmitChanges();
+                    using (DataClasses1DataContext context = new DataClasses1DataContext())
+                    {
+                        context.Cliente.InsertOnSubmit(clienteLINQ);
+                        context.SubmitChanges();
+                    }
+                    scope.Complete();
                 }
                 cliente.Id = clienteLINQ.id;
                 return cliente;
@@ -63,21 +73,26 @@ namespace Datos
                 return null;
             }
         }
+
         public static ClienteEntidad Actualizar(ClienteEntidad cliente)
         {
             try
             {
-                using (DataClasses1DataContext context = new DataClasses1DataContext())
+                using (TransactionScope scope = new TransactionScope())
                 {
-                    var clienteLINQ = context.Cliente.FirstOrDefault(x => x.id == cliente.Id);
+                    using (DataClasses1DataContext context = new DataClasses1DataContext())
+                    {
+                        var clienteLINQ = context.Cliente.FirstOrDefault(x => x.id == cliente.Id);
 
-                    clienteLINQ.telefono = cliente.Telefono;
-                    clienteLINQ.cedula = cliente.Cedula;
-                    clienteLINQ.correo = cliente.Correo;
-                    clienteLINQ.apellido = cliente.Apellido;
-                    clienteLINQ.direccion = cliente.Direccion;
-                    clienteLINQ.nombre = cliente.Nombre;
-                    context.SubmitChanges();
+                        clienteLINQ.telefono = cliente.Telefono;
+                        clienteLINQ.cedula = cliente.Cedula;
+                        clienteLINQ.correo = cliente.Correo;
+                        clienteLINQ.apellido = cliente.Apellido;
+                        clienteLINQ.direccion = cliente.Direccion;
+                        clienteLINQ.nombre = cliente.Nombre;
+                        context.SubmitChanges();
+                    }
+                    scope.Complete();
                 }
                 return cliente;
             }
@@ -91,12 +106,15 @@ namespace Datos
         {
             try
             {
-                cliente = BuscarClientePorCedula(cliente.Cedula);
-                if (cliente == null)
-                    return null;
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    cliente = BuscarClientePorCedula(cliente.Cedula);
+                    if (cliente == null)
+                        return null;
 
-                cliente.ListaFacturas = FacturaDatos.DevolverFacturasCliente(cliente.Id);
-                
+                    cliente.ListaFacturas = FacturaDatos.DevolverFacturasCliente(cliente.Id);
+                    scope.Complete();
+                }
                 return cliente;
             }
             catch (Exception)
@@ -111,20 +129,24 @@ namespace Datos
             {
                 ClienteEntidad cliente = new ClienteEntidad();
                 Cliente clienteLINQ = new Cliente();
-                using (DataClasses1DataContext context = new DataClasses1DataContext())
+                using (TransactionScope scope = new TransactionScope())
                 {
-                    clienteLINQ = context.Cliente.FirstOrDefault(x => x.id == id);
+                    using (DataClasses1DataContext context = new DataClasses1DataContext())
+                    {
+                        clienteLINQ = context.Cliente.FirstOrDefault(x => x.id == id);
 
-                    if (clienteLINQ == null)
-                        return null;
+                        if (clienteLINQ == null)
+                            return null;
 
-                    cliente.Id = clienteLINQ.id;
-                    cliente.Cedula = clienteLINQ.cedula;
-                    cliente.Nombre = clienteLINQ.nombre;
-                    cliente.Apellido = clienteLINQ.apellido;
-                    cliente.Direccion = clienteLINQ.direccion;
-                    cliente.Telefono = clienteLINQ.telefono;
-                    cliente.Correo = clienteLINQ.correo;
+                        cliente.Id = clienteLINQ.id;
+                        cliente.Cedula = clienteLINQ.cedula;
+                        cliente.Nombre = clienteLINQ.nombre;
+                        cliente.Apellido = clienteLINQ.apellido;
+                        cliente.Direccion = clienteLINQ.direccion;
+                        cliente.Telefono = clienteLINQ.telefono;
+                        cliente.Correo = clienteLINQ.correo;
+                    }
+                    scope.Complete();
                 }
                 return cliente;
             }
@@ -142,15 +164,19 @@ namespace Datos
 
                 List<Cliente> listaLINQ = new List<Cliente>();
 
-                using (DataClasses1DataContext context = new DataClasses1DataContext())
+                using (TransactionScope scope = new TransactionScope())
                 {
-                    var resultado = from c in context.Cliente select c;
-                    listaLINQ = resultado.ToList();
-                }
+                    using (DataClasses1DataContext context = new DataClasses1DataContext())
+                    {
+                        var resultado = from c in context.Cliente select c;
+                        listaLINQ = resultado.ToList();
+                    }
 
-                foreach (var item in listaLINQ)
-                {
-                    listaClientes.Add(new ClienteEntidad(item.id, item.apellido, item.nombre, item.cedula, item.direccion, item.telefono, item.correo));
+                    foreach (var item in listaLINQ)
+                    {
+                        listaClientes.Add(new ClienteEntidad(item.id, item.apellido, item.nombre, item.cedula, item.direccion, item.telefono, item.correo));
+                    }
+                    scope.Complete();
                 }
                 return listaClientes;
             }

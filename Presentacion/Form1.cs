@@ -28,6 +28,8 @@ namespace Presentacion
             UltimoNumeroComprobante();
         }
 
+        
+
         private void UltimoNumeroComprobante()
         {
             int numeroComrpobante = FacturaNegocio.DevolverNumeroUltimoComprobante();
@@ -122,10 +124,14 @@ namespace Presentacion
         private void GuardarVentaDetalle(VentaDetalleEntidad ventaDetalle)
         {
             ProductoEntidad producto = ProductoNegocio.CargarDatosProductoPorId(ventaDetalle.IdProducto);
-
+            if (producto == null)
+            {
+                MessageBox.Show("Error, no se encontro el producto en la BD", "Producto", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             if (ventaDetalle.Cantidad > producto.Stock)
             {
-                MessageBox.Show("Excede el Stock de este Producto", "Limite de Productos", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Se termino o excede el Stock de este Producto", "Limite de Productos", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
             if (ComprobarSiEsNuevaVenta(ventaDetalle))
@@ -248,24 +254,28 @@ namespace Presentacion
         {
             if (HayCamposVacios())
                 return false;
-            if (ComprobarListadoConBD())
+            if (ComprobarConBDInexistentes())
                 return false;
             GuardarCliente();
             GuardarFactura();
             return true;
         }
 
-        private bool ComprobarListadoConBD()
+        private bool ComprobarConBDInexistentes()
         {
-            string productoInexistente = FacturaNegocio.ComprobarExistenciaProductos(factura);
-            if (string.IsNullOrEmpty(productoInexistente))
+            List<VentaDetalleProductoCabeceraEntidad> productosInexistentes = VentaDetalleNegocio.ComprobarExistenciaProductos(listaCabecera);
+            if (productosInexistentes != null)
             {
-                MessageBox.Show("Error, no se puede realizar la venta, el producto no existe en la base de datos", "Comprobar Productos", 
+                string mensaje = "\nLos siguientes productos no existen en la base de datos: \n\n";
+                foreach (var item in productosInexistentes)
+                {
+                    mensaje += $"{item.NombreComercial} - {item.Id}\n";
+                }
+                MessageBox.Show($"Error, no se puede realizar la venta. {mensaje}", "Comprobar Productos",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
+                return true;
             }
-
-            return true;
+            return false;
         }
 
         private void GenerarFactura()
@@ -347,6 +357,17 @@ namespace Presentacion
             calcularTotalYSubtotal();
             cargarListaVentaDetalle();
             LimpiarCamposCliente();
+            LimpiarCamposProducto();
+        }
+
+        private void LimpiarCamposProducto()
+        {
+            textBox_NombreComercial.Text = string.Empty;
+            textBox_NombreGenerico.Text = string.Empty;
+            textBox_Presentacion.Text = string.Empty;
+            textBox_Precio.Text = string.Empty;
+            textBox_IdProducto.Text = string.Empty;
+            textBox_Cantidad.Text = string.Empty;
         }
 
         private void nuevaVentaToolStripMenuItem_Click(object sender, EventArgs e)
@@ -381,38 +402,69 @@ namespace Presentacion
             Font fuenteCabezera2 = new Font("Calibri", 12);
             Font fuenteCuerpo = new Font("Time New Roman", 10);
 
+
             int y = 5;
 
-            e.Graphics.DrawString("FARMACIA GIRASOL", fuenteCabezera, Brushes.DarkGray, 120, y += 20);
-            e.Graphics.DrawString("DETALLE DE LA VENTA", fuenteCabezera2, Brushes.DarkBlue, 120, y += 20);
-            e.Graphics.DrawString("CLIENTE: " + cliente.Nombre, fuenteCuerpo, Brushes.Black, 20, y += 40);
-            e.Graphics.DrawString("CEDULA: " + cliente.Cedula, fuenteCuerpo, Brushes.Black, 20, y += 40);
-            e.Graphics.DrawString("TELEFONO: " + cliente.Telefono, fuenteCuerpo, Brushes.Black, 20, y += 40);
-            e.Graphics.DrawString("CORREO: " + cliente.Correo, fuenteCuerpo, Brushes.Black, 20, y += 40);
-            e.Graphics.DrawString("DIRECCION: " + cliente.Direccion, fuenteCuerpo, Brushes.Black, 20, y += 40);
-            e.Graphics.DrawString("FECHA COMPROBANTE: " + factura.FechaVenta, fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString("FARMACIA GIRASOL", fuenteCabezera, Brushes.DarkGray, 330, y += 20);
+            e.Graphics.DrawString("DETALLE DE LA VENTA", fuenteCabezera2, Brushes.DarkBlue, 335, y += 20);
+
+            e.Graphics.DrawString("NOMBRE CLIENTE: ", fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString(cliente.Nombre + cliente.Apellido, fuenteCuerpo, Brushes.Black, 200, y);
+
+            e.Graphics.DrawString("CEDULA: ", fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString(cliente.Cedula, fuenteCuerpo, Brushes.Black, 200, y);
+
+            e.Graphics.DrawString("TELEFONO: ", fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString(cliente.Telefono, fuenteCuerpo, Brushes.Black, 200, y);
+
+            e.Graphics.DrawString("CORREO: ", fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString(cliente.Correo, fuenteCuerpo, Brushes.Black, 200, y);
+
+            e.Graphics.DrawString("DIRECCION: ", fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString(cliente.Direccion, fuenteCuerpo, Brushes.Black, 200, y);
+
+            e.Graphics.DrawString("FECHA COMPROBANTE: ", fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString(factura.FechaVenta + "", fuenteCuerpo, Brushes.Black, 200, y);
 
             y += 20;
 
             e.Graphics.DrawString("PRODUCTO", fuenteCuerpo, Brushes.Black, 20, y += 40);
-            e.Graphics.DrawString("PRECIO UNITARIO", fuenteCuerpo, Brushes.Black, 140, y);
-            e.Graphics.DrawString("CANTIDAD", fuenteCuerpo, Brushes.Black, 250, y);
-            e.Graphics.DrawString("SUBTOTAL", fuenteCuerpo, Brushes.Black, 325, y);
+            e.Graphics.DrawString("PRECIO UNITARIO", fuenteCuerpo, Brushes.Black, 350, y);
+            e.Graphics.DrawString("CANTIDAD", fuenteCuerpo, Brushes.Black, 550, y);
+            e.Graphics.DrawString("SUBTOTAL", fuenteCuerpo, Brushes.Black, 700, y);
 
             foreach (var item in listaCabecera)
             {
                 e.Graphics.DrawString(item.NombreComercial, fuenteCuerpo, Brushes.Black, 20, y += 40);
                 e.Graphics.DrawString(item.Precio.ToString("0." +
                     "" +
-                    "00"), fuenteCuerpo, Brushes.Black, 140, y);
-                e.Graphics.DrawString(item.Cantidad.ToString(), fuenteCuerpo, Brushes.Black, 400, y);
-                e.Graphics.DrawString(item.Subtotal.ToString("0.00"), fuenteCuerpo, Brushes.Black, 500, y);
+                    "00"), fuenteCuerpo, Brushes.Black, 350, y);
+                e.Graphics.DrawString(item.Cantidad.ToString(), fuenteCuerpo, Brushes.Black, 550, y);
+                e.Graphics.DrawString(item.Subtotal.ToString("0.00"), fuenteCuerpo, Brushes.Black, 700, y);
             }
 
-            y = 700;
-            e.Graphics.DrawString("IVA: " + factura.Iva.ToString("0.00"), fuenteCuerpo, Brushes.Black, 20, y += 20);
-            e.Graphics.DrawString("SUBTOTAL: " + factura.Subtotal.ToString("0.00"), fuenteCuerpo, Brushes.Black, 20, y += 20);
-            e.Graphics.DrawString("TOTAL: " + factura.Total.ToString("0.00"), fuenteCuerpo, Brushes.Black, 20, y += 20);
+            y = 1000;
+            e.Graphics.DrawString("IVA: ", fuenteCuerpo, Brushes.Black, 20, y += 20);
+            e.Graphics.DrawString(factura.Iva.ToString("0.00"), fuenteCuerpo, Brushes.Black, 200, y);
+            e.Graphics.DrawString("SUBTOTAL: ", fuenteCuerpo, Brushes.Black, 20, y += 20);
+            e.Graphics.DrawString(factura.Subtotal.ToString("0.00"), fuenteCuerpo, Brushes.Black, 200, y);
+            e.Graphics.DrawString("TOTAL: ", fuenteCuerpo, Brushes.Black, 20, y += 20);
+            e.Graphics.DrawString(factura.Total.ToString("0.00"), fuenteCuerpo, Brushes.Black, 200, y);
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+        }
+
+        private void salirToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            // Cerrar el programa
+            Application.Exit();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            dataGridViewDetalle_Venta.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
     }
 }

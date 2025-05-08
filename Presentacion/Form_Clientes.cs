@@ -35,5 +35,10 @@ namespace Presentacion
                 form.ShowDialog();
             }
         }
+
+        private void Form_Clientes_Load(object sender, EventArgs e)
+        {
+            dataGridView_clientes.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
     }
 }

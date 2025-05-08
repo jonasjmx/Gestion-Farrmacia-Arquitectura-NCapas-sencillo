@@ -93,5 +93,10 @@ namespace Presentacion
                 formVentas.ShowDialog();
             }
         }
+
+        private void Form_VentasAlCliente_Load(object sender, EventArgs e)
+        {
+            dataGridView_facturasCLiente.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
     }
 }

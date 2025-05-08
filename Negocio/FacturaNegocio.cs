@@ -10,11 +10,6 @@ namespace Negocio
 {
     public static class FacturaNegocio
     {
-        public static string ComprobarExistenciaProductos(FacturaEntidad factura)
-        {
-            return FacturaDatos.ComprobarExistenciaProductos(factura);
-        }
-
         public static int DevolverNumeroUltimoComprobante()
         {
             return FacturaDatos.DevolverNumeroUltimoComprobante();

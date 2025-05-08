@@ -15,7 +15,7 @@ namespace Presentacion
     public partial class Form_VentasDeLaFactura : Form
     {
 
-        private readonly List<VentaDetalleProductoCabeceraEntidad> ventasCabecera = new List<VentaDetalleProductoCabeceraEntidad>();
+        private readonly List<VentaDetalleProductoCabeceraEntidad> listaCabecera = new List<VentaDetalleProductoCabeceraEntidad>();
         private readonly ClienteEntidad cliente = new ClienteEntidad();
         private readonly FacturaEntidad factura = new FacturaEntidad();
 
@@ -29,14 +29,22 @@ namespace Presentacion
 
         private void CargarDatosFactura()
         {
-            var clienteTemporal = ClienteNegocio.BuscarClientePorId(Convert.ToInt32(factura.IdCliente));
-            if (clienteTemporal == null)
+            ClienteEntidad cliente = ClienteNegocio.BuscarClientePorId(Convert.ToInt32(factura.IdCliente));
+            if (cliente == null)
                 return;
 
             label__NumeroFactura.Text = factura.Id.ToString();
-            label_CedulaCLiente.Text = clienteTemporal.Id.ToString();
-            label_NombreCliente.Text = clienteTemporal.Nombre.ToString();
-            label_ApellidoCliente.Text = clienteTemporal.Apellido.ToString();
+            label_CedulaCLiente.Text = cliente.Id.ToString();
+            label_NombreCliente.Text = cliente.Nombre.ToString();
+            label_ApellidoCliente.Text = cliente.Apellido.ToString();
+
+            this.cliente.Id = cliente.Id;
+            this.cliente.Nombre = cliente.Nombre;
+            this.cliente.Apellido = cliente.Apellido;
+            this.cliente.Cedula = cliente.Cedula;
+            this.cliente.Telefono = cliente.Telefono;
+            this.cliente.Correo = cliente.Correo;
+            this.cliente.Direccion = cliente.Direccion;
         }
 
 
@@ -49,7 +57,7 @@ namespace Presentacion
             foreach (var ventaDetalle in factura.ListaVentaDetalle)
             {
                 producto = ProductoNegocio.CargarDatosProductoPorId(ventaDetalle.IdProducto);
-                ventasCabecera.Add(new VentaDetalleProductoCabeceraEntidad(
+                listaCabecera.Add(new VentaDetalleProductoCabeceraEntidad(
                     ventaDetalle.Id,
                     producto.NombreGenerico,
                     producto.NombreComercial,
@@ -59,7 +67,7 @@ namespace Presentacion
                     ventaDetalle.Subtotal
                     ));
             }
-            dataGridView_VentasFactura.DataSource = ventasCabecera;
+            dataGridView_VentasFactura.DataSource = listaCabecera;
         }
 
         private void Imprimir_Click(object sender, EventArgs e)
@@ -76,43 +84,63 @@ namespace Presentacion
 
         private void ImprimirDoc_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
-            Font fuenteCabezera = new Font("Calibri", 12, FontStyle.Bold);
-            Font fuenteCabezera2 = new Font("Calibri", 10);
-            Font fuenteCuerpo = new Font("Time New Roman", 8);
+            Font fuenteCabezera = new Font("Calibri", 14, FontStyle.Bold);
+            Font fuenteCabezera2 = new Font("Calibri", 12);
+            Font fuenteCuerpo = new Font("Time New Roman", 10);
 
 
             int y = 5;
 
-            e.Graphics.DrawString("FARMACIA GIRASOL", fuenteCabezera, Brushes.DarkGray, 250, y += 20);
-            e.Graphics.DrawString("DETALLE DE LA VENTA", fuenteCabezera2, Brushes.DarkBlue, 250, y += 20);
-            e.Graphics.DrawString("CLIENTE: " + cliente.Nombre, fuenteCuerpo, Brushes.Black, 20, y += 40);
-            e.Graphics.DrawString("CEDULA: " + cliente.Cedula, fuenteCuerpo, Brushes.Black, 20, y += 40);
-            e.Graphics.DrawString("TELEFONO: " + cliente.Telefono, fuenteCuerpo, Brushes.Black, 20, y += 40);
-            e.Graphics.DrawString("CORREO: " + cliente.Correo, fuenteCuerpo, Brushes.Black, 20, y += 40);
-            e.Graphics.DrawString("DIRECCION: " + cliente.Direccion, fuenteCuerpo, Brushes.Black, 20, y += 40);
-            e.Graphics.DrawString("FECHA COMPROBANTE: " + factura.FechaVenta, fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString("FARMACIA GIRASOL", fuenteCabezera, Brushes.DarkGray, 330, y += 20);
+            e.Graphics.DrawString("DETALLE DE LA VENTA", fuenteCabezera2, Brushes.DarkBlue, 335, y += 20);
+            
+            e.Graphics.DrawString("NOMBRE CLIENTE: ", fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString(cliente.Nombre + cliente.Apellido, fuenteCuerpo, Brushes.Black, 200, y);
+            
+            e.Graphics.DrawString("CEDULA: ", fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString(cliente.Cedula, fuenteCuerpo, Brushes.Black, 200, y);
+
+            e.Graphics.DrawString("TELEFONO: ", fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString(cliente.Telefono, fuenteCuerpo, Brushes.Black, 200, y);
+
+            e.Graphics.DrawString("CORREO: ", fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString(cliente.Correo, fuenteCuerpo, Brushes.Black, 200, y);
+
+            e.Graphics.DrawString("DIRECCION: ", fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString(cliente.Direccion, fuenteCuerpo, Brushes.Black, 200, y);
+
+            e.Graphics.DrawString("FECHA COMPROBANTE: ", fuenteCuerpo, Brushes.Black, 20, y += 40);
+            e.Graphics.DrawString(factura.FechaVenta + "", fuenteCuerpo, Brushes.Black, 200, y);
 
             y += 20;
 
             e.Graphics.DrawString("PRODUCTO", fuenteCuerpo, Brushes.Black, 20, y += 40);
-            e.Graphics.DrawString("PRECIO UNITARIO", fuenteCuerpo, Brushes.Black, 250, y);
-            e.Graphics.DrawString("CANTIDAD", fuenteCuerpo, Brushes.Black, 400, y);
-            e.Graphics.DrawString("SUBTOTAL", fuenteCuerpo, Brushes.Black, 500, y);
+            e.Graphics.DrawString("PRECIO UNITARIO", fuenteCuerpo, Brushes.Black, 350, y);
+            e.Graphics.DrawString("CANTIDAD", fuenteCuerpo, Brushes.Black, 550, y);
+            e.Graphics.DrawString("SUBTOTAL", fuenteCuerpo, Brushes.Black, 700, y);
 
-            foreach (var item in ventasCabecera)
+            foreach (var item in listaCabecera)
             {
                 e.Graphics.DrawString(item.NombreComercial, fuenteCuerpo, Brushes.Black, 20, y += 40);
                 e.Graphics.DrawString(item.Precio.ToString("0." +
                     "" +
-                    "00"), fuenteCuerpo, Brushes.Black, 250, y);
-                e.Graphics.DrawString(item.Cantidad.ToString(), fuenteCuerpo, Brushes.Black, 400, y);
-                e.Graphics.DrawString(item.Subtotal.ToString("0.00"), fuenteCuerpo, Brushes.Black, 500, y);
+                    "00"), fuenteCuerpo, Brushes.Black, 350, y);
+                e.Graphics.DrawString(item.Cantidad.ToString(), fuenteCuerpo, Brushes.Black, 550, y);
+                e.Graphics.DrawString(item.Subtotal.ToString("0.00"), fuenteCuerpo, Brushes.Black, 700, y);
             }
 
-            y = 1100;
-            e.Graphics.DrawString("IVA: " + factura.Iva.ToString("0.00"), fuenteCuerpo, Brushes.Black, 20, y += 20);
-            e.Graphics.DrawString("SUBTOTAL: " + factura.Subtotal.ToString("0.00"), fuenteCuerpo, Brushes.Black, 20, y += 20);
-            e.Graphics.DrawString("TOTAL: " + factura.Total.ToString("0.00"), fuenteCuerpo, Brushes.Black, 20, y += 20);
+            y = 1000;
+            e.Graphics.DrawString("IVA: ", fuenteCuerpo, Brushes.Black, 20, y += 20);
+            e.Graphics.DrawString(factura.Iva.ToString("0.00"), fuenteCuerpo, Brushes.Black, 200, y);
+            e.Graphics.DrawString("SUBTOTAL: ", fuenteCuerpo, Brushes.Black, 20, y += 20);
+            e.Graphics.DrawString(factura.Subtotal.ToString("0.00"), fuenteCuerpo, Brushes.Black, 200, y);
+            e.Graphics.DrawString("TOTAL: ", fuenteCuerpo, Brushes.Black, 20, y += 20);
+            e.Graphics.DrawString(factura.Total.ToString("0.00"), fuenteCuerpo, Brushes.Black, 200, y);
+        }
+
+        private void Form_VentasDeLaFactura_Load(object sender, EventArgs e)
+        {
+            dataGridView_VentasFactura.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
     }
 }

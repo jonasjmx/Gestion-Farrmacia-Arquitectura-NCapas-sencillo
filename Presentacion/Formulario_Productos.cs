@@ -32,5 +32,10 @@ namespace Presentacion
             producto = ProductoNegocio.CargarDatosProductoPorId(id);
             this.Close();
         }
+
+        private void Formulario_Productos_Load(object sender, EventArgs e)
+        {
+            dataGridView_Productos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
     }
 }
